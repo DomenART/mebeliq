@@ -57,7 +57,16 @@ $categories = array_map('modify_data', get_terms([
 
             <?php get_search_form() ?>
         </div>
-        
+
+        <div class="catalog-toggle" uk-toggle="target: .catalog-menu; cls: catalog-menu_open">
+            <span>
+                <i></i>
+                <i></i>
+                <i></i>
+            </span>
+            Выбрать мебель
+        </div>
+
         <ul class="catalog-menu">
             <?php foreach ($categories as $category): ?>
             <li <?php if ($_SERVER['REQUEST_URI'] == $category['link']): ?>class="uk-active"<?php endif; ?>>
@@ -70,7 +79,7 @@ $categories = array_map('modify_data', get_terms([
                     </span>
                 </a>
                 <?php if ($children = $category['children']): ?>
-                    <div class="catalog-menu__dropdown" uk-dropdown>
+                    <div class="catalog-menu__dropdown">
                         <ul>
                             <?php foreach ($children as $child): ?>
                             <li>
@@ -92,6 +101,5 @@ $categories = array_map('modify_data', get_terms([
                 <?php endif; ?>
             <?php endforeach; ?>
         </div>
-        <div></div>
     </div>
 </header>

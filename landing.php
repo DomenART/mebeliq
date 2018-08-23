@@ -17,7 +17,7 @@ Template Name: Главная
                     <div class="section-popular__title">Популярные Товары</div>
 
                     <div class="products uk-grid uk-grid-small" uk-grid>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -40,7 +40,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card product-card_discount">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -64,7 +64,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -87,7 +87,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -110,7 +110,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -133,7 +133,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -156,7 +156,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -179,7 +179,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -202,7 +202,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -225,7 +225,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -248,7 +248,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
@@ -271,7 +271,7 @@ Template Name: Главная
                                 </div>
                             </div>
                         </div>
-                        <div class="uk-width-1-4">
+                        <div class="uk-width-1-2@s uk-width-1-3@m uk-width-1-4@xl">
                             <div class="product-card">
                                 <a href="#" class="product-card__title">“Эцелот” <span>Диван</span></a>
                                 <a href="#" class="product-card__image">
