@@ -2,7 +2,7 @@
     <div class="footer-first">
         <div class="uk-container uk-container-large">
             <div class="uk-grid" uk-grid>
-                <div class="uk-width-1-4">
+                <div class="uk-width-1-2 uk-width-1-4@s footer__cell footer__cell_first">
                     <div class="footer__head">Адреса:</div>
                     <?php foreach (get_field('address', 'option') as $address): ?>
                     <a href="<?php echo $address['link'] ?>" class="footer__address">
@@ -10,7 +10,7 @@
                     </a>
                     <?php endforeach; ?>
                 </div>
-                <div class="uk-width-1-4">
+                <div class="uk-width-1-2 uk-width-1-4@s footer__cell footer__cell_second">
                     <div class="footer__head">Как купить:</div>
                     <?php wp_nav_menu([
                         'theme_location' => 'how_to_buy',
@@ -18,7 +18,7 @@
                         'menu_class' => 'footer__menu'
                     ]) ?>
                 </div>
-                <div class="uk-width-1-4 uk-text-right">
+                <div class="uk-width-1-2 uk-width-1-4@s footer__cell footer__cell_third">
                     <div class="footer__head">Разделы:</div>
                     <?php wp_nav_menu([
                         'theme_location' => 'sections',
@@ -26,7 +26,7 @@
                         'menu_class' => 'footer__menu'
                     ]) ?>
                 </div>
-                <div class="uk-width-1-4 uk-text-right">
+                <div class="uk-width-1-2 uk-width-1-4@s footer__cell footer__cell_fourth">
                     <div class="footer__head">Информация:</div>
                     <?php wp_nav_menu([
                         'theme_location' => 'information',

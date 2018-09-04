@@ -37,7 +37,7 @@ module.exports = {
                     {
                         loader: "css-loader",
                         options: {
-                            minimize: true
+                            minimize: false
                             // minimize: env === 'production' ? true : false
                         }
                     },

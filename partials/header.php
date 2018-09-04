@@ -39,17 +39,7 @@ $categories = array_map('modify_data', get_terms([
                 'menu_class' => 'mainmenu'
             ]) ?>
 
-            <div class="header-cart">
-                <div class="header-cart__icon"></div>
-                <div class="header-cart__info">
-                    <div class="header-cart__count">
-                        2 товара<br>
-                    </div>
-                    <div class="header-cart__price">
-                        17 060.-
-                    </div>
-                </div>
-            </div>
+            <?php woocommerce_mini_cart() ?>
 
             <div class="header__address">
                 г.Брянск
