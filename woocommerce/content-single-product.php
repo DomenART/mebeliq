@@ -12,6 +12,8 @@ if ( post_password_required() ) {
 }
 
 global $product;
+
+$prices = getProductPrices($product);
 ?>
 <div id="product-<?php the_ID(); ?>" <?php wc_product_class(); ?>>
     <div class="product__breadcrumb">
@@ -59,7 +61,7 @@ global $product;
                             echo '<div class="attribute-color__values">';
                             $terms = wc_get_product_terms($product->get_id(), $attribute_name, array('fields' => 'all'));
                             $key = 'attribute_' . sanitize_title($attribute_name);
-                            $checked = isset($_REQUEST[$key]) ? wc_clean( urldecode( wp_unslash( $_REQUEST[ $key ] ) ) ) : $product->get_variation_default_attribute( $key );
+                            $checked = isset($_REQUEST[$key]) ? wc_clean( urldecode( wp_unslash( $_REQUEST[ $key ] ) ) ) : $product->get_variation_default_attribute( sanitize_title($attribute_name) );
                             foreach ($terms as $term) {
                                 $color = get_field('color', 'pa_color_' . $term->term_id);
                                 echo '<label title="' . $term->name . '" class="attribute-color__value">';
@@ -68,10 +70,10 @@ global $product;
                             }
                             echo '</div>';
                             echo '</div>';
-                        } else if (count($options) === 2 && $options[0] === 'da' && $options[1] === 'net') {
+                        } else if (sizeof($options) === 2) {
                             echo '<div class="attribute-radio">';
                                 $key = 'attribute_' . esc_attr(sanitize_title($attribute_name));
-                                $checked = isset($_REQUEST[$key]) ? wc_clean( urldecode( wp_unslash( $_REQUEST[ $key ] ) ) ) : $product->get_variation_default_attribute( $key );
+                                $checked = isset($_REQUEST[$key]) ? wc_clean( urldecode( wp_unslash( $_REQUEST[ $key ] ) ) ) : $product->get_variation_default_attribute( sanitize_title($attribute_name) );
                                 echo '<label class="attribute-radio__label" for="' . $key . '">' . wc_attribute_label($attribute_name) . '</label>';
                                 echo '<div class="attribute-radio__values">';
                                 echo '<label class="attribute-radio__value">Нет <input type="radio" name="' . $key . '" value="net" ' . ($checked === 'net' ? 'checked' : '') . '><span></span></label>';
@@ -97,33 +99,19 @@ global $product;
             </div>
         </div>
 
-        <?php
-            if ($product->get_type() === 'simple') {
-                $min_price = $product->price;
-                $max_price = $product->price;
-                $min_reg_price = $product->regular_price;
-                $max_reg_price = $product->regular_price;
-            } else {
-                $prices = $product->get_variation_prices(true);
-                $min_price = current($prices['price']);
-                $max_price = end($prices['price']);
-                $min_reg_price = current($prices['regular_price']);
-                $max_reg_price = end($prices['regular_price']);
-            }
-        ?>
         <div class="product-price">
-            <?php if ($product->is_on_sale() && $min_reg_price === $max_reg_price): ?>
+            <?php if ($product->is_on_sale() && $prices['min_reg_price'] === $prices['max_reg_price']): ?>
             <div class="product-price__old">
                 старая цена:
-                <?php echo wc_price($max_reg_price) ?>
+                <?php echo wc_price($prices['max_reg_price']) ?>
             </div>
             <?php endif; ?>
             <div class="product-price__current">
                 <div class="product-add">
                     <div class="product-add__label">в корзину:</div>
                     <div class="product-add__value">
-                        <?php if ($min_price !== $max_price): ?>от <?php endif; ?>
-                        <?php echo wc_price($min_price); ?>
+                        <?php if ($prices['min_price'] !== $prices['max_price']): ?>от <?php endif; ?>
+                        <?php echo wc_price($prices['min_price']); ?>
 
                         <input type="hidden" name="add-to-cart" value="<?php echo absint($product->get_id()) ?>" />
                         <input name="product_id" value="<?php echo absint($product->get_id()) ?>" type="hidden">

@@ -7,7 +7,7 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 $link = esc_url(apply_filters('woocommerce_loop_product_link', get_the_permalink(), $product));
 ?>
 <div <?php wc_product_class(); ?>>
-    <div class="product-card">
+    <div class="product-card<?php if ($product->is_on_sale()): ?> product-card_discount<?php endif; ?>">
         <div class="product-card__title">
             <a href="<?php echo $link ?>"><?php the_title() ?></a>
         </div>
@@ -16,14 +16,14 @@ $link = esc_url(apply_filters('woocommerce_loop_product_link', get_the_permalink
         </a>
         <div class="product-card__info">
             <dl class="product-card__params">
-                <?php if ($length = $product->get_attribute('length')): ?>
-                <dt>Длина:</dt><dd><?php echo $length ?></dd>
+                <?php if ($length = $product->get_length()): ?>
+                    <dt>Длина:</dt><dd><?php echo $length ?> см.</dd>
                 <?php endif; ?>
-                <?php if ($depth = $product->get_attribute('depth')): ?>
-                <dt>Глубина:</dt><dd><?php echo $depth ?></dd>
+                <?php if ($width = $product->get_width()): ?>
+                    <dt>Ширина:</dt><dd><?php echo $width ?> см.</dd>
                 <?php endif; ?>
-                <?php if ($height = $product->get_attribute('height')): ?>
-                <dt>Высота:</dt><dd><?php echo $height ?></dd>
+                <?php if ($height = $product->get_height()): ?>
+                    <dt>Высота:</dt><dd><?php echo $height ?> см.</dd>
                 <?php endif; ?>
             </dl>
 

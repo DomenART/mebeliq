@@ -96,6 +96,13 @@ remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wra
 remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
 remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
 
+remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cross_sell_display' );
+remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cart_totals', 10 );
+remove_action( 'woocommerce_proceed_to_checkout', 'woocommerce_button_proceed_to_checkout', 20 );
+
+remove_action( 'woocommerce_checkout_order_review', 'woocommerce_order_review', 10 );
+//remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
+
 add_filter('woocommerce_product_description_heading', function () { return ''; }, 100);
 add_filter('woocommerce_product_additional_information_heading', function () { return ''; }, 100);
 add_filter('woocommerce_product_tabs', function ( $tabs ) {
@@ -131,6 +138,41 @@ add_filter('woocommerce_product_tabs', function ( $tabs ) {
 //
     return $tabs;
 }, 98);
+
+add_filter( 'woocommerce_enqueue_styles', '__return_false' );
+
+add_filter( 'woocommerce_checkout_fields' , function ( $fields ) {
+    unset($fields['order']['order_comments']);
+
+    return $fields;
+} );
+
+// Our hooked in function - $fields is passed via the filter!
+
+
+add_action('init', function () {
+    global $woocommerce;
+    if( isset($_REQUEST['clear-cart']) ) {
+        $woocommerce->cart->empty_cart();
+    }
+});
+
+function getProductPrices($product) {
+    $output = array();
+    if ($product->get_type() === 'variable') {
+        $prices = $product->get_variation_prices(true);
+        $output['min_price'] = current($prices['price']);
+        $output['max_price'] = end($prices['price']);
+        $output['min_reg_price'] = current($prices['regular_price']);
+        $output['max_reg_price'] = end($prices['regular_price']);
+    } else {
+        $output['min_price'] = $product->price;
+        $output['max_price'] = $product->price;
+        $output['min_reg_price'] = $product->regular_price;
+        $output['max_reg_price'] = $product->regular_price;
+    }
+    return $output;
+}
 
 /**
  * Склонение слова после числа.

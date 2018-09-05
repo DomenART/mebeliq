@@ -6,6 +6,14 @@ import UIkit from 'uikit'
 window.UIkit = UIkit
 UIkit.use(require('uikit/dist/js/uikit-icons'))
 
+function objectifyForm(formArray) {//serialize data function
+  var returnArray = {};
+  for (var i = 0; i < formArray.length; i++){
+    returnArray[formArray[i]['name']] = formArray[i]['value'];
+  }
+  return returnArray;
+}
+
 document.querySelectorAll('.gallery, .lightbox').forEach(item => {
     UIkit.lightbox(item)
 })
@@ -118,3 +126,44 @@ document.querySelectorAll('.js-crosssell-load-all').forEach(all => {
     })
   })
 })
+
+document.querySelectorAll('.js-cart-accordion').forEach(accordion => {
+  let current = 0
+
+  const component = UIkit.accordion(accordion, {
+    collapsible: false
+  })
+
+  jQuery(accordion).on('click', '.js-cart-accordion-next', function() {
+    if (component.items.length > current + 1) {
+      if (component.items[current + 1].classList.contains('uk-hidden')) {
+        component.items[current + 1].classList.remove('uk-hidden')
+      }
+      component.toggle(current + 1)
+    }
+  })
+
+  jQuery(accordion).on('click', '.js-cart-accordion-previous', function() {
+    if (current > 0) {
+      component.items[current].classList.add('uk-hidden')
+      component.toggle(current - 1)
+    }
+  })
+
+  // UIkit.util.on(accordion, 'show', (e, a, s) => {
+  //   console.log(e, a, s)
+  // })
+})
+
+const cart = jQuery('.woocommerce-cart-form');
+cart.on('change', '.quantity input', function () {
+  const data = objectifyForm(cart.serializeArray());
+  data.update_cart = 'update_cart';
+
+  cart.addClass('loading');
+  jQuery.post(cart.attr('action'), data, function (response) {
+    const new_cart = jQuery(document.createElement('div')).html(response).find('.woocommerce-cart-form')
+    cart.html(new_cart.html());
+    cart.removeClass('loading');
+  });
+});

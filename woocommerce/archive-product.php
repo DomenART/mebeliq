@@ -11,7 +11,7 @@
 
             <div class="uk-container uk-container-large">
                 <div class="uk-grid uk-grid-large" uk-grid>
-                    <div class="uk-width-1-4">
+                    <div class="uk-width-1-4@m">
                         <?php
                         /**
                          * Hook: woocommerce_sidebar.
@@ -22,7 +22,7 @@
                         ?>
                     </div>
 
-                    <div class="uk-width-3-4">
+                    <div class="uk-width-3-4@m">
                         <?php
                         /**
                          * Hook: woocommerce_before_main_content.
@@ -118,7 +118,7 @@
                         ?>
                     </div>
                     <div class="section-more">
-                        <a href="#" class="section-more__link">
+                        <a href="<?php the_permalink(81) ?>" class="section-more__link">
                             <span>Задать свой вопрос... </span>
                             <img src="<?php echo get_bloginfo('template_url') ?>/dist/img/icon-question.png" alt="">
                         </a>

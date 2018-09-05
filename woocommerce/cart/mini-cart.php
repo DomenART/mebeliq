@@ -10,7 +10,7 @@ do_action( 'woocommerce_before_mini_cart' ); ?>
     <span class="header-cart__info">
         <?php if ( ! WC()->cart->is_empty() ) : ?>
         <span class="header-cart__count">
-            <?php echo num_decline(count(WC()->cart->get_cart()), 'товар', 'товара', 'товаров') ?><br>
+            <?php echo num_decline(count(WC()->cart->get_cart()), array('товар', 'товара', 'товаров')) ?><br>
         </span>
         <span class="header-cart__price">
             <?php echo WC()->cart->get_cart_subtotal(); ?>
