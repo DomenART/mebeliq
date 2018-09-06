@@ -1,4 +1,63 @@
 <?php
+
+function getProductPrices($product) {
+    $output = array();
+    if ($product->get_type() === 'variable') {
+        $prices = $product->get_variation_prices(true);
+        $output['min_price'] = current($prices['price']);
+        $output['max_price'] = end($prices['price']);
+        $output['min_reg_price'] = current($prices['regular_price']);
+        $output['max_reg_price'] = end($prices['regular_price']);
+    } else {
+        $output['min_price'] = $product->price;
+        $output['max_price'] = $product->price;
+        $output['min_reg_price'] = $product->regular_price;
+        $output['max_reg_price'] = $product->regular_price;
+    }
+    return $output;
+}
+
+/**
+ * Склонение слова после числа.
+ *
+ * Примеры вызова:
+ * num_decline( $num, 'книга,книги,книг' )
+ * num_decline( $num, array('книга','книги','книг') )
+ * num_decline( $num, 'книга', 'книги', 'книг' )
+ *
+ * @ver: 1.1
+ *
+ * @param  number|string $number  - число после которого будет слово. Можно указать число в HTML тегах.
+ * @param  string|array $titles - варианты склонения или первое слово для кратного 1
+ * @param  string [$param2 = ''] - второе слово, если не указано в параметре $titles
+ * @param  string [$param3 = ''] woocommerce_before_main_content- третье слово, если не указано в параметре $titles
+ * @return string
+ */
+function num_decline( $number, $titles, $param2 = '', $param3 = '' ){
+
+    if( is_string($titles) )
+        $titles = preg_split('~,\s*~', $titles );
+
+    if( count($titles) < 3 )
+        $titles = array( func_get_arg(1), func_get_arg(2), func_get_arg(3) );
+
+    $cases = array(2, 0, 1, 1, 1, 2);
+
+    $intnum = abs( intval( strip_tags( $number ) ) );
+
+    return $number .' '. $titles[ ($intnum % 100 > 4 && $intnum % 100 < 20) ? 2 : $cases[min($intnum % 10, 5)] ];
+}
+
+if( function_exists('acf_add_options_page') ) {
+    acf_add_options_page(array(
+        'page_title' 	=> 'Параметры',
+        'menu_title'	=> 'Параметры',
+        'menu_slug' 	=> 'acf-options',
+        'capability'	=> 'edit_posts',
+        'redirect'		=> false
+    ));
+}
+
 add_action('after_setup_theme', function() {
 	register_nav_menus(array(
 		'mainmenu' => 'Main Menu',
@@ -12,15 +71,14 @@ add_action('after_setup_theme', function() {
 	add_theme_support('post-thumbnails');
 });
 
-if( function_exists('acf_add_options_page') ) {
-	acf_add_options_page(array(
-		'page_title' 	=> 'Параметры',
-		'menu_title'	=> 'Параметры',
-		'menu_slug' 	=> 'acf-options',
-		'capability'	=> 'edit_posts',
-		'redirect'		=> false
-	));
-}
+register_sidebar(array(
+    'before_widget' => '<li id="%1$s" class="shop-filter %2$s">',
+    'after_widget' => '</div></li>',
+    'before_title' => '<div class="shop-filter__title uk-accordion-title">',
+    'after_title' => '</div><div class="shop-filter__body uk-accordion-content">',
+    'id' => 'shop-filters',
+    'name' => 'Фильтры'
+));
 
 add_filter('navigation_markup_template', 'my_navigation_template', 10, 2 );
 function my_navigation_template( $template, $class ){
@@ -61,16 +119,6 @@ function ajax_load_crosssell() {
 
     wp_die();
 }
-
-// function get_custom_post_type_template($single_template) {
-// 	global $post;
-
-// 	if ($post->post_type == 'product') {
-// 		 $single_template = dirname( __FILE__ ) . '/single-template.php';
-// 	}
-// 	return $single_template;
-// }
-// add_filter( 'single_template', 'get_custom_post_type_template' );
 
 remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10 );
 remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20 );
@@ -139,77 +187,70 @@ add_filter('woocommerce_product_tabs', function ( $tabs ) {
     return $tabs;
 }, 98);
 
-add_filter( 'woocommerce_enqueue_styles', '__return_false' );
+/**
+ * Отключение стилей магазина
+ */
+add_filter('woocommerce_enqueue_styles', '__return_false');
+add_filter('woocommerce_get_terms_and_conditions_checkbox_text', function() {
+    $page_id = wc_terms_and_conditions_page_id();
+    return 'Я согласен(на) на обработку ' . '<a href="' . get_permalink($page_id) . '" class="woocommerce-terms-and-conditions-link woocommerce-terms-and-conditions-link--open" target="_blank">персональных данных</a>';
+});
 
-add_filter( 'woocommerce_checkout_fields' , function ( $fields ) {
+/**
+ * Удаление поля комментария из формы заказа
+ */
+add_filter('woocommerce_checkout_fields', function ($fields) {
     unset($fields['order']['order_comments']);
 
     return $fields;
-} );
+});
 
-// Our hooked in function - $fields is passed via the filter!
+/**
+ * Добавление сборки в форму заказа
+ */
+add_action('woocommerce_after_order_notes', function ($checkout) {
+    echo '<div class="order__title">Нужна сборка?</div>';
+    echo '<div class="form-fields-radio">';
+    woocommerce_form_field('need_assembly', array(
+        'type' => 'radio',
+        'default' => 'yes',
+        'options' => array(
+            'yes' => 'Да <span>(+10% к стоимости заказа)</span>',
+            'no' => 'Нет'
+        )
+    ), $checkout->get_value( 'need_assembly' ));
+    echo '</div>';
+});
+add_action('woocommerce_checkout_update_order_meta', function ($order_id) {
+    if (!empty($_POST['need_assembly'])) {
+        $value = sanitize_text_field($_POST['need_assembly']);
+        update_post_meta($order_id, 'need_assembly', $value);
 
+        if ('yes' === $value) {
+            $order = new WC_Order($order_id);
+            $order_items = $order->get_items();
+            if (!is_wp_error($order_items)) {
+                $percentage = 0.1;
+                $surcharge = 0;
+                foreach ($order_items as $item_id => $order_item) {
+                    $surcharge += $order_item->get_total() * $percentage;
+                }
+                $order->add_fee((object) array(
+                    'name' => 'Оплата за сборку',
+                    'amount' => $surcharge
+                ));
+                $order->calculate_totals();
+            }
+        }
+    }
+});
 
+/**
+ * Очистка корзины
+ */
 add_action('init', function () {
     global $woocommerce;
     if( isset($_REQUEST['clear-cart']) ) {
         $woocommerce->cart->empty_cart();
     }
 });
-
-function getProductPrices($product) {
-    $output = array();
-    if ($product->get_type() === 'variable') {
-        $prices = $product->get_variation_prices(true);
-        $output['min_price'] = current($prices['price']);
-        $output['max_price'] = end($prices['price']);
-        $output['min_reg_price'] = current($prices['regular_price']);
-        $output['max_reg_price'] = end($prices['regular_price']);
-    } else {
-        $output['min_price'] = $product->price;
-        $output['max_price'] = $product->price;
-        $output['min_reg_price'] = $product->regular_price;
-        $output['max_reg_price'] = $product->regular_price;
-    }
-    return $output;
-}
-
-/**
- * Склонение слова после числа.
- *
- * Примеры вызова:
- * num_decline( $num, 'книга,книги,книг' )
- * num_decline( $num, array('книга','книги','книг') )
- * num_decline( $num, 'книга', 'книги', 'книг' )
- *
- * @ver: 1.1
- *
- * @param  number|string $number  - число после которого будет слово. Можно указать число в HTML тегах.
- * @param  string|array $titles - варианты склонения или первое слово для кратного 1
- * @param  string [$param2 = ''] - второе слово, если не указано в параметре $titles
- * @param  string [$param3 = ''] woocommerce_before_main_content- третье слово, если не указано в параметре $titles
- * @return string
- */
-function num_decline( $number, $titles, $param2 = '', $param3 = '' ){
-
-    if( is_string($titles) )
-        $titles = preg_split('~,\s*~', $titles );
-
-    if( count($titles) < 3 )
-        $titles = array( func_get_arg(1), func_get_arg(2), func_get_arg(3) );
-
-    $cases = array(2, 0, 1, 1, 1, 2);
-
-    $intnum = abs( intval( strip_tags( $number ) ) );
-
-    return $number .' '. $titles[ ($intnum % 100 > 4 && $intnum % 100 < 20) ? 2 : $cases[min($intnum % 10, 5)] ];
-}
-
-register_sidebar(array(
-    'before_widget' => '<li id="%1$s" class="shop-filter %2$s">',
-    'after_widget' => '</div></li>',
-    'before_title' => '<div class="shop-filter__title uk-accordion-title">',
-    'after_title' => '</div><div class="shop-filter__body uk-accordion-content">',
-    'id' => 'shop-filters',
-    'name' => 'Фильтры'
-));

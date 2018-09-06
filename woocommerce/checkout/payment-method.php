@@ -2,7 +2,7 @@
 defined('ABSPATH') || exit;
 ?>
 <li class="wc_payment_method payment_method_<?php echo $gateway->id; ?>">
-    <label class="input-radio"><input id="payment_method_<?php echo $gateway->id; ?>" type="radio" name="payment_method" value="<?php echo esc_attr( $gateway->id ); ?>" <?php checked( $gateway->chosen, true ); ?> data-order_button_text="<?php echo esc_attr( $gateway->order_button_text ); ?>" /><span></span></label>
+    <input id="payment_method_<?php echo $gateway->id; ?>" type="radio" class="input-radio" name="payment_method" value="<?php echo esc_attr( $gateway->id ); ?>" <?php checked( $gateway->chosen, true ); ?> data-order_button_text="<?php echo esc_attr( $gateway->order_button_text ); ?>" />
 
     <label for="payment_method_<?php echo $gateway->id; ?>">
         <?php echo $gateway->get_title(); ?>

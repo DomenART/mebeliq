@@ -14,6 +14,14 @@ function objectifyForm(formArray) {//serialize data function
   return returnArray;
 }
 
+function getParams() {
+  return window.location.search.replace('?','').split('&').reduce((p,e) => {
+    const a = e.split('=')
+    p[decodeURIComponent(a[0])] = decodeURIComponent(a[1])
+    return p
+  }, {})
+}
+
 document.querySelectorAll('.gallery, .lightbox').forEach(item => {
     UIkit.lightbox(item)
 })
@@ -128,31 +136,28 @@ document.querySelectorAll('.js-crosssell-load-all').forEach(all => {
 })
 
 document.querySelectorAll('.js-cart-accordion').forEach(accordion => {
-  let current = 0
+  const params = getParams()
 
-  const component = UIkit.accordion(accordion, {
-    collapsible: false
-  })
+  if (!params['key']) {
+    const component = UIkit.accordion(accordion, {
+      collapsible: false,
+      active: params['key'] ? 2 : 0
+    })
 
-  jQuery(accordion).on('click', '.js-cart-accordion-next', function() {
-    if (component.items.length > current + 1) {
-      if (component.items[current + 1].classList.contains('uk-hidden')) {
-        component.items[current + 1].classList.remove('uk-hidden')
-      }
-      component.toggle(current + 1)
-    }
-  })
+    jQuery(accordion).on('click', '.js-cart-go_to_order', function() {
+      component.items[1].classList.remove('uk-hidden')
+      component.toggle(1)
+    })
 
-  jQuery(accordion).on('click', '.js-cart-accordion-previous', function() {
-    if (current > 0) {
-      component.items[current].classList.add('uk-hidden')
-      component.toggle(current - 1)
-    }
-  })
-
-  // UIkit.util.on(accordion, 'show', (e, a, s) => {
-  //   console.log(e, a, s)
-  // })
+    jQuery(accordion).on('click', '.js-cart-go_to_cart', function() {
+      component.toggle(0)
+      component.items[1].classList.add('uk-hidden')
+    })
+  } else {
+    jQuery([document.documentElement, document.body]).animate({
+      scrollTop: jQuery(accordion).offset().top
+    }, 1000)
+  }
 })
 
 const cart = jQuery('.woocommerce-cart-form');
