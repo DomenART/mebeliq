@@ -5,14 +5,18 @@ if ( empty( $product ) || ! $product->is_visible() ) {
     return;
 }
 $link = esc_url(apply_filters('woocommerce_loop_product_link', get_the_permalink(), $product));
+$categories = get_the_terms( $product->id, 'product_cat' );
 ?>
 <div <?php wc_product_class(); ?>>
     <div class="product-card<?php if ($product->is_on_sale()): ?> product-card_discount<?php endif; ?>">
         <div class="product-card__title">
             <a href="<?php echo $link ?>"><?php the_title() ?></a>
+            <?php if ($categories) : ?>
+                <span><?php echo current($categories)->name ?></span>
+            <?php endif; ?>
         </div>
         <a href="<?php echo $link ?>" class="product-card__image">
-            <?php echo woocommerce_get_product_thumbnail() ?>
+            <img src="<?php echo get_the_post_thumbnail_url($product->id, 'full') ?>" alt="" uk-cover>
         </a>
         <div class="product-card__info">
             <dl class="product-card__params">

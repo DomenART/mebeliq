@@ -22,30 +22,76 @@ function getParams() {
   }, {})
 }
 
+function number_format( number, decimals, dec_point, thousands_sep ) {
+  var i, j, kw, kd, km;
+
+  // input sanitation & defaults
+  if( isNaN(decimals = Math.abs(decimals)) ){
+    decimals = 2;
+  }
+  if( dec_point == undefined ){
+    dec_point = ",";
+  }
+  if( thousands_sep == undefined ){
+    thousands_sep = ".";
+  }
+
+  i = parseInt(number = (+number || 0).toFixed(decimals)) + "";
+
+  if( (j = i.length) > 3 ){
+    j = j % 3;
+  } else{
+    j = 0;
+  }
+
+  km = (j ? i.substr(0, j) + thousands_sep : "");
+  kw = i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands_sep);
+  //kd = (decimals ? dec_point + Math.abs(number - i).toFixed(decimals).slice(2) : "");
+  kd = (decimals ? dec_point + Math.abs(number - i).toFixed(decimals).replace(/-/, 0).slice(2) : "");
+
+
+  return km + kw + kd;
+}
+
 document.querySelectorAll('.gallery, .lightbox').forEach(item => {
     UIkit.lightbox(item)
 })
 
 document.querySelectorAll('.js-gallery').forEach(gallery => {
-    const main = gallery.querySelector('.js-gallery-main')
-    const thumbnailsWrap = gallery.querySelector('.js-gallery-thumbnails')
-    const thumbnails = thumbnailsWrap.querySelectorAll('img')
-    const slider = UIkit.slider(thumbnailsWrap)
+  const main = gallery.querySelector('.js-gallery-main')
+  const lightbox = gallery.querySelector('.js-gallery-lightbox')
+  const lightboxLinks = lightbox.querySelectorAll('a')
+  const thumbnailsWrap = gallery.querySelector('.js-gallery-thumbnails')
+  const thumbnails = thumbnailsWrap.querySelectorAll('img')
+  const slider = UIkit.slider(thumbnailsWrap)
 
-    thumbnails.forEach(img => {
-        img.addEventListener('click', function(e) {
-            e.preventDefault()
-            thumbnails.forEach(row => row.classList.remove('active'))
-            img.classList.add('active')
-            slider.show(Array.prototype.indexOf.call(thumbnails, img))
-            main.src = img.dataset.large
-            main.dataset.full = img.dataset.full
-        })
+  thumbnails.forEach(img => {
+    img.addEventListener('click', function(e) {
+      e.preventDefault()
+      thumbnails.forEach(row => row.classList.remove('active'))
+      img.classList.add('active')
+      slider.show(Array.prototype.indexOf.call(thumbnails, img))
+      main.src = img.dataset.large
+      main.dataset.full = img.dataset.full
+    })
+  })
+
+  UIkit.util.on(thumbnailsWrap, 'itemshow', function (e) {
+    e.target.querySelector('img').classList.add('active')
+  })
+
+  main.addEventListener('click', function(e) {
+    e.preventDefault()
+
+    let active = 0
+    thumbnails.forEach((row, key) => {
+      if (row.classList.contains('active')) {
+        active = key
+      }
     })
 
-    UIkit.util.on(thumbnailsWrap, 'itemshow', function (e) {
-        e.target.querySelector('img').classList.add('active')
-    })
+    lightboxLinks[active].click()
+  })
 })
 
 // window.addEventListener('scroll', function(e) {
@@ -58,12 +104,12 @@ document.querySelectorAll('.js-gallery').forEach(gallery => {
 //     }
 // })
 
-// document.addEventListener("DOMContentLoaded", function() {
-//     const footer = document.querySelector('.js-footer')
-//     const page = document.querySelector('.js-page')
+document.addEventListener("DOMContentLoaded", function() {
+    const footer = document.querySelector('.js-footer')
+    const page = document.querySelector('.js-page')
 
-//     page.style.minHeight = `${window.innerHeight - footer.offsetHeight}px`
-// })
+    page.style.minHeight = `${window.innerHeight - footer.offsetHeight}px`
+})
 
 document.querySelectorAll('.catalog-menu__dropdown').forEach(item => {
     const params = {}
@@ -172,3 +218,68 @@ cart.on('change', '.quantity input', function () {
     cart.removeClass('loading');
   });
 });
+
+document.querySelectorAll('.wpcf7').forEach(wrap => {
+  const getModal = el => el.classList.contains('uk-modal') ? el : getModal(el.parentElement)
+  const modal = getModal(wrap)
+
+  wrap.addEventListener('wpcf7mailsent', () => {
+    wrap.classList.add('wpcf7_success')
+    setTimeout(() => {
+      modal.__uikit__.modal.hide()
+      wrap.classList.remove('wpcf7_success')
+    }, 3000)
+  })
+})
+
+document.querySelectorAll('.attribute-toggle').forEach(attribute => {
+  const default_value = attribute.dataset.default
+  const btn_no = attribute.querySelector('.attribute-toggle-switcher__value_no')
+  const btn_yes = attribute.querySelector('.attribute-toggle-switcher__value_yes')
+  const inputs = attribute.querySelectorAll('.attribute-toggle-values input')
+
+  btn_no.addEventListener('click', function (e) {
+    attribute.classList.remove('attribute-toggle_open')
+    inputs.forEach(input => {
+      if (input.value === default_value) {
+        input.click()
+      }
+      // input.checked = input.value === default_value
+    })
+  })
+
+  btn_yes.addEventListener('click', function (e) {
+    attribute.classList.add('attribute-toggle_open')
+  })
+})
+
+document.querySelectorAll('form[data-product_variations]').forEach(form => {
+  const variations = jQuery.parseJSON(form.dataset.product_variations)
+  const inputs = form.querySelectorAll('input,select')
+  const price = form.querySelector('.js-product-price')
+  const updatePrice = () => {
+    const data = objectifyForm(jQuery(form).serializeArray())
+    let display_price = null
+    variations.forEach(variation => {
+      let success = false
+      Object.keys(variation.attributes).forEach(key => {
+        if (variation.attributes[key] !== '' && data[key] === variation.attributes[key]) {
+          success = true
+        }
+      })
+      if (success) {
+        display_price = variation.display_price
+      }
+    })
+    const currencySymbol = price.querySelector('.woocommerce-Price-currencySymbol').cloneNode(true)
+    jQuery(price).html('<span class="woocommerce-Price-amount amount">' + number_format(display_price, 0, '.', ' ') + '&nbsp;</span>').append(currencySymbol)
+  }
+
+  inputs.forEach(input => input.addEventListener('change', updatePrice))
+  updatePrice()
+})
+
+
+// variation_id
+// display_price
+// attributes

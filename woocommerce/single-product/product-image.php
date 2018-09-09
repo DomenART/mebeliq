@@ -38,6 +38,11 @@ if (!has_post_thumbnail() && $attachment_ids) {
             </li>
             <?php endforeach; ?>
         </ul>
+        <div class="uk-hidden js-gallery-lightbox" uk-lightbox>
+            <?php foreach ($attachment_ids as $attachment_id): ?>
+                <a href="<?php echo wp_get_attachment_image_url($attachment_id, 'full') ?>"></a>
+            <?php endforeach; ?>
+        </div>
     </div>
     <?php endif; ?>
 </div>

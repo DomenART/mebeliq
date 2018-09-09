@@ -18,11 +18,11 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
         <?php do_action( 'woocommerce_checkout_before_customer_details' ); ?>
 
         <div class="uk-grid" id="customer_details" uk-grid>
-            <div class="uk-width-1-2">
+            <div class="uk-width-1-2@s">
                 <?php do_action( 'woocommerce_checkout_billing' ); ?>
             </div>
 
-            <div class="uk-width-1-2">
+            <div class="uk-width-1-2@s">
                 <?php do_action( 'woocommerce_checkout_shipping' ); ?>
 
                 <!--<h3 id="order_review_heading">--><?php //_e( 'Your order', 'woocommerce' ); ?><!--</h3>-->

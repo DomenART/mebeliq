@@ -63,7 +63,8 @@ add_action('after_setup_theme', function() {
 		'mainmenu' => 'Main Menu',
 		'how_to_buy' => 'How To Buy',
 		'sections' => 'Sections',
-		'information' => 'Information'
+        'information' => 'Information',
+        'library' => 'Library'
 	));
 
 	add_theme_support('woocommerce');
@@ -191,6 +192,10 @@ add_filter('woocommerce_product_tabs', function ( $tabs ) {
  * Отключение стилей магазина
  */
 add_filter('woocommerce_enqueue_styles', '__return_false');
+
+/**
+ * Текст согласия на обработку в заказе
+ */
 add_filter('woocommerce_get_terms_and_conditions_checkbox_text', function() {
     $page_id = wc_terms_and_conditions_page_id();
     return 'Я согласен(на) на обработку ' . '<a href="' . get_permalink($page_id) . '" class="woocommerce-terms-and-conditions-link woocommerce-terms-and-conditions-link--open" target="_blank">персональных данных</a>';
@@ -254,3 +259,112 @@ add_action('init', function () {
         $woocommerce->cart->empty_cart();
     }
 });
+
+/**
+ * Определение номера заказа
+ */
+add_filter('woocommerce_order_number', function ($order_id) {
+    $query = new WC_Order_Query(array(
+        'orderby' => 'date',
+        'order' => 'ASC',
+        'return' => 'ids',
+        'date_created' => date_i18n('Y-m-d')
+    ));
+    $orders = $query->get_orders();
+    $idx = 0;
+    foreach ($orders as $order) {
+        $idx++;
+        if ($order == $order_id) break;
+    }
+    return '00' . date_i18n('dm') . $idx;
+});
+
+/**
+ * Добавление типа атрибута
+ */
+if ( function_exists( 'acf_add_local_field_group' ) ) {
+    $attribute_terms = wc_get_attribute_taxonomies();
+    $group_filter = array();
+    foreach( $attribute_terms as $attribute_term ) {
+        $group_filter[$attribute_term->attribute_name] = $attribute_term->attribute_label;
+    }
+    acf_add_local_field_group(array(
+        'key' => 'product_attribute_types_group',
+        'title' => 'Типы атрибутов',
+        'fields' => array(array(
+            'key'               => 'product_attribute_types',
+            'label'             => 'Типы атрибутов',
+            'name'              => 'product_attribute_types',
+            'type'              => 'repeater',
+            'instructions'      => '',
+            'required'          => 0,
+            'conditional_logic' => 0,
+            'wrapper'           => array (
+                'width'             => '',
+                'class'             => '',
+                'id'                => '',
+            ),
+            'collapsed'         => '',
+            'min'               => '',
+            'max'               => '',
+            'layout'            => 'table',
+        )),
+        'location' => array(array(array(
+            'param'    => 'options_page',
+            'operator' => '==',
+            'value'    => 'acf-options',
+            'order_no' => 0,
+            'group_no' => 0,
+        ))),
+        'menu_order' => 10,
+        'position' => 'normal',
+        'style' => 'default',
+        'label_placement' => 'top',
+        'instruction_placement' => 'label',
+        'hide_on_screen' => ''
+    ));
+
+    acf_add_local_field( array (
+        'key' => 'field',
+        'label' => 'Поле',
+        'name' => 'field',
+        'parent' => 'product_attribute_types',
+        'type' => 'select',
+        'required' => 1,
+        'choices' => $group_filter,
+    ));
+
+    acf_add_local_field( array (
+        'key' => 'type',
+        'label' => 'Тип',
+        'name' => 'type',
+        'parent' => 'product_attribute_types',
+        'type' => 'select',
+        'required' => 1,
+        'choices' => array(
+            'select' => 'Выпадающий список',
+            'radio' => 'Радио переключатель',
+            'color' => 'Цвет',
+            'color_radio' => 'Цвета с радио включателем',
+            'image_radio' => 'Изображения с радио включателем',
+        ),
+    ));
+
+    acf_add_local_field( array (
+        'key' => 'alt',
+        'label' => 'Алетернативное описание',
+        'name' => 'alt',
+        'parent' => 'product_attribute_types',
+        'type' => 'text',
+        'required' => 0,
+    ));
+
+    acf_add_local_field( array (
+        'key' => 'hide_default',
+        'label' => 'Скрыть значение по умолчанию',
+        'name' => 'hide_default',
+        'parent' => 'product_attribute_types',
+        'type' => 'true_false',
+        'required' => 0,
+    ));
+}

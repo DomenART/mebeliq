@@ -1,4 +1,4 @@
-<footer class="footer">
+<footer class="footer js-footer">
     <div class="footer-first">
         <div class="uk-container uk-container-large">
             <div class="uk-grid" uk-grid>
@@ -46,6 +46,20 @@
         </div>
     </div>
 </footer>
+
+<div id="question" class="uk-modal-container" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <?php echo do_shortcode('[contact-form-7 id="9" title="Задать вопрос"]') ?>
+    </div>
+</div>
+
+<div id="individual" class="uk-modal-container" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <?php echo do_shortcode('[contact-form-7 id="901" title="Индивидуальный проект мебели"]') ?>
+    </div>
+</div>
 
 <!-- <button class="totop js-totop" uk-totop uk-scroll></button> -->
 
