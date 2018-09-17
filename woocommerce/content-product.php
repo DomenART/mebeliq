@@ -16,15 +16,15 @@ $categories = get_the_terms( $product->id, 'product_cat' );
             <?php endif; ?>
         </div>
         <a href="<?php echo $link ?>" class="product-card__image">
-            <img src="<?php echo get_the_post_thumbnail_url($product->id, 'full') ?>" alt="" uk-cover>
+            <?php the_post_thumbnail('thumbnail') ?>
         </a>
         <div class="product-card__info">
             <dl class="product-card__params">
-                <?php if ($length = $product->get_length()): ?>
-                    <dt>Длина:</dt><dd><?php echo $length ?> см.</dd>
-                <?php endif; ?>
                 <?php if ($width = $product->get_width()): ?>
                     <dt>Ширина:</dt><dd><?php echo $width ?> см.</dd>
+                <?php endif; ?>
+                <?php if ($length = $product->get_length()): ?>
+                    <dt>Глубина:</dt><dd><?php echo $length ?> см.</dd>
                 <?php endif; ?>
                 <?php if ($height = $product->get_height()): ?>
                     <dt>Высота:</dt><dd><?php echo $height ?> см.</dd>

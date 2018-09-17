@@ -13,6 +13,14 @@ Template Name: Главная
             <div class="js-page">
                 <?php get_template_part( 'partials/header' ) ?>
 
+                <?php if (is_active_sidebar('home-sidebar')) : ?>
+                    <section>
+                        <div class="uk-container uk-container-large">
+                            <?php dynamic_sidebar('home-sidebar') ?>
+                        </div>
+                    </section>
+                <?php endif; ?>
+
                 <section class="section-popular">
                     <div class="uk-container">
                         <div class="section-popular__title">Популярные Товары</div>
@@ -54,7 +62,7 @@ Template Name: Главная
 
                     <div class="uk-container">
                         <div class="section-more">
-                            <a href="#individual" class="section-more__link" uk-toggle>
+                            <a href="#individual" class="section-more__link">
                                 <span>Связаться для заказа...</span>
                                 <img src="<?php echo get_bloginfo('template_url') ?>/dist/img/icon-envelope.png" alt="">
                             </a>

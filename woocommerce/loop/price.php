@@ -13,6 +13,6 @@ $prices = getProductPrices($product);
     </div>
 
     <?php if ($product->is_on_sale() && $prices['min_reg_price'] === $prices['max_reg_price']): ?>
-        <div class="price-card__old"><?php echo wc_price($prices['max_reg_price']) ?></div>
+        <div class="price-card__old">старая цена: <span><?php echo number_format($prices['max_reg_price'], 0, ',', ' ') ?></span></div>
     <?php endif; ?>
 </div>

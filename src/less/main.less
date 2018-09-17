@@ -410,6 +410,43 @@ body {
     }
 }
 
+.header {
+    .aws-container {
+        position: absolute;
+        top: 195px;
+        right: -45px;
+        @media (max-width: 1900px) {
+            right: 0;
+        }
+        @media (max-width: @breakpoint-medium-max) {
+            top: 115px;
+        }
+        @media (max-width: @breakpoint-small-max) {
+            display: none;
+        }
+        .aws-search-field {
+            border-width: 1px;
+            border-color: rgb(183, 183, 183);
+            border-style: solid;
+            border-radius: 2px;
+            background-color: rgb(255, 255, 255);
+            color: #606060;
+            font-size: 15px;
+            position: relative;
+            width: 279px;
+            height: 37px;
+            line-height: 35px;
+            padding-left: 15px;
+            padding-right: 55px;
+            box-sizing: border-box;
+        }
+    }
+}
+
+.aws-search-result {
+    box-sizing: border-box;
+}
+
 @media (max-width: @breakpoint-small-max) {
     .catalog-menu {
         min-width: 208px;
@@ -655,7 +692,7 @@ body {
     border-bottom: 2/18em solid transparent;
     //padding-bottom: 25/18em;
     overflow: hidden;
-    padding-bottom: 92%;
+    //padding-bottom: 92%;
     position: relative;
     @media (max-width: @breakpoint-xsmall-max) {
         //height: 216/18em;
@@ -807,19 +844,24 @@ body {
 }
 
 .price-card__old {
-    font-size: 16.89/18em;
-    color: #a0a0a0;
+    // font-size: 16.89/18em;
+    font-size: 14/18em;
+    color: #ff7e30;
     position: absolute;
     left: 50%;
-    top: 30/18em;
+    top: 30/14em;
     transform: translateX(-50%);
     white-space: nowrap;
     @media (max-width: @breakpoint-xsmall-max) {
         font-size: 11/18em;
         top: 22/11em;
     }
+    > span {
+        text-decoration: line-through;
+    }
     .woocommerce-Price-currencySymbol {
         font-size: 85%;
+        display: none;
     }
 }
 
@@ -1120,7 +1162,47 @@ a.footer__address {
         margin-bottom: 6px;
         background-color: #cec3c0;
         border-radius: 4px;
+        box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.4);
     }
+}
+
+.attribute-pattern {
+}
+
+.attribute-pattern__values {
+
+}
+
+.attribute-pattern__value {
+    display: inline-block;
+    input {
+        display: none;
+        &:checked + span {
+            box-shadow: 0 0 0 2px #48a1a9;
+        }
+    }
+    span {
+        display: inline-block;
+        width: 45px;
+        height: 45px;
+        text-indent: -9999px;
+        border: 1px solid #fff;
+        cursor: pointer;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        background-color: #cec3c0;
+        border-radius: 4px;
+        background-size: cover;
+        box-shadow: 0 0 2px 0px rgba(0, 0, 0, 0.4);
+    }
+}
+
+.attribute-pattern__dropdown {
+    background-size: cover;
+    width: 420px;
+    height: 420px;
+    border-radius: 4px;
+    border: 1px solid #f5f5f5;
 }
 
 .attribute-inline-radio {

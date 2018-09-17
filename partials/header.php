@@ -45,7 +45,7 @@ $categories = array_map('modify_data', get_terms([
                 г.Брянск
             </div>
 
-            <?php get_search_form() ?>
+            <?php if ( function_exists( 'aws_get_search_form' ) ) { aws_get_search_form(); } ?>
         </div>
 
         <div class="catalog-toggle" uk-toggle="target: .catalog-menu; cls: catalog-menu_open">

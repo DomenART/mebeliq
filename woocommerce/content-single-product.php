@@ -63,24 +63,27 @@
                             $by_name['pa_' . $type['field']] = $type;
                         }
                         foreach ($product->get_variation_attributes() as $attribute_name => $options) {
+                            $key = 'attribute_' . sanitize_title($attribute_name);
                             $type = $by_name[$attribute_name]['type'] ?: 'select';
+                            $switch = $by_name[$attribute_name]['switch'] ?: false;
                             $alt = $by_name[$attribute_name]['alt'] ?: wc_attribute_label($attribute_name);
+                            $default = $product->get_variation_default_attribute( sanitize_title($attribute_name) );
+                            $checked = isset($_REQUEST[$key]) ? wc_clean( urldecode( wp_unslash( $_REQUEST[ $key ] ) ) ) : $product->get_variation_default_attribute( sanitize_title($attribute_name) );
+                            $terms = wc_get_product_terms($product->get_id(), $attribute_name, array('fields' => 'all'));
                             echo '<div class="product-attribute product-attribute_' . $attribute_name . ' attribute-' . $type . '">';
+                            if ($switch) {
+                                echo '<div class="attribute-toggle' . (!($checked === $default) ? ' attribute-toggle_open' : '') . '" data-default="' . $default . '">';
+                                echo '<div class="attribute-toggle-switcher">';
+                                echo '<div class="attribute-toggle-switcher__label">' . $alt . '</div>';
+                                echo '<div class="attribute-toggle-switcher__values">';
+                                echo '<div class="attribute-toggle-switcher__value attribute-toggle-switcher__value_no">Нет</div>';
+                                echo '<div class="attribute-toggle-switcher__value attribute-toggle-switcher__value_yes">Да</div>';
+                                echo '</div>';
+                                echo '</div>';
+                                echo '<div class="attribute-toggle-values">';
+                            }
                             switch ($type) {
-                                case 'image_radio':
-                                    $key = 'attribute_' . sanitize_title($attribute_name);
-                                    $default = $product->get_variation_default_attribute( sanitize_title($attribute_name) );
-                                    $checked = isset($_REQUEST[$key]) ? wc_clean( urldecode( wp_unslash( $_REQUEST[ $key ] ) ) ) : $default;
-                                    $terms = wc_get_product_terms($product->get_id(), $attribute_name, array('fields' => 'all'));
-                                    echo '<div class="attribute-toggle' . (!($checked === $default) ? ' attribute-toggle_open' : '') . '" data-default="' . $default . '">';
-                                    echo '<div class="attribute-toggle-switcher">';
-                                    echo '<div class="attribute-toggle-switcher__label">' . $alt . '</div>';
-                                    echo '<div class="attribute-toggle-switcher__values">';
-                                    echo '<div class="attribute-toggle-switcher__value attribute-toggle-switcher__value_no">Нет</div>';
-                                    echo '<div class="attribute-toggle-switcher__value attribute-toggle-switcher__value_yes">Да</div>';
-                                    echo '</div>';
-                                    echo '</div>';
-                                    echo '<div class="attribute-toggle-values">';
+                                case 'image':
                                     echo '<div class="attribute-image">';
                                     echo '<div class="attribute-image__values">';
                                     foreach ($terms as $term) {
@@ -93,42 +96,9 @@
                                     }
                                     echo '</div>';
                                     echo '</div>';
-                                    echo '</div>';
-                                    echo '</div>';
-                                    break;
-                                case 'color_radio':
-                                    $key = 'attribute_' . sanitize_title($attribute_name);
-                                    $default = $product->get_variation_default_attribute( sanitize_title($attribute_name) );
-                                    $checked = isset($_REQUEST[$key]) ? wc_clean( urldecode( wp_unslash( $_REQUEST[ $key ] ) ) ) : $product->get_variation_default_attribute( sanitize_title($attribute_name) );
-                                    $terms = wc_get_product_terms($product->get_id(), $attribute_name, array('fields' => 'all'));
-                                    echo '<div class="attribute-toggle' . (!($checked === $default) ? ' attribute-toggle_open' : '') . '" data-default="' . $default . '">';
-                                    echo '<div class="attribute-toggle-switcher">';
-                                    echo '<div class="attribute-toggle-switcher__label">' . $alt . '</div>';
-                                    echo '<div class="attribute-toggle-switcher__values">';
-                                    echo '<div class="attribute-toggle-switcher__value attribute-toggle-switcher__value_no">Нет</div>';
-                                    echo '<div class="attribute-toggle-switcher__value attribute-toggle-switcher__value_yes">Да</div>';
-                                    echo '</div>';
-                                    echo '</div>';
-                                    echo '<div class="attribute-toggle-values">';
-                                    echo '<div class="attribute-image">';
-                                    echo '<div class="attribute-image__values">';
-                                    foreach ($terms as $term) {
-                                        $color = get_field('color', $attribute_name . '_' . $term->term_id);
-                                        $hidden = $by_name[$attribute_name]['hide_default'] && $checked === $term->slug;
-                                        echo '<label title="' . $term->name . '" class="attribute-color__value"' . ($hidden ? ' style="display: none"' : '') . '>';
-                                        echo '<input type="radio" name="' . $key . '" value="' . $term->slug . '" ' . ($checked === $term->slug ? 'checked' : '') . '><span style="background-color: ' . $color . '">' . $term->name . '</span>';
-                                        echo '</label>';
-                                    }
-                                    echo '</div>';
-                                    echo '</div>';
-                                    echo '</div>';
-                                    echo '</div>';
                                     break;
                                 case 'color':
                                     echo '<div class="attribute-color__values">';
-                                    $terms = wc_get_product_terms($product->get_id(), $attribute_name, array('fields' => 'all'));
-                                    $key = 'attribute_' . sanitize_title($attribute_name);
-                                    $checked = isset($_REQUEST[$key]) ? wc_clean( urldecode( wp_unslash( $_REQUEST[ $key ] ) ) ) : $product->get_variation_default_attribute( sanitize_title($attribute_name) );
                                     foreach ($terms as $term) {
                                         $color = get_field('color', $attribute_name . '_' . $term->term_id);
                                         echo '<label title="' . $term->name . '" class="attribute-color__value">';
@@ -137,10 +107,18 @@
                                     }
                                     echo '</div>';
                                     break;
+                                case 'pattern':
+                                    echo '<div class="attribute-pattern__values">';
+                                    foreach ($terms as $term) {
+                                        $image = get_field('image', $attribute_name . '_' . $term->term_id);
+                                        echo '<label title="' . $term->name . '" class="attribute-pattern__value">';
+                                        echo '<input type="radio" name="' . $key . '" value="' . $term->slug . '" ' . ($checked === $term->slug ? 'checked' : '') . '><span style=\'background-image: url("' . $image['url'] . '")\'>' . $term->name . '</span>';
+                                        echo '</label>';
+                                        echo '<div uk-dropdown="pos: top-center; delay-hide: 200" class="attribute-pattern__dropdown" style=\'background-image: url("' . $image['url'] . '")\'></div>';
+                                    }
+                                    echo '</div>';
+                                    break;
                                 case 'radio':
-                                    $key = 'attribute_' . esc_attr(sanitize_title($attribute_name));
-                                    $checked = isset($_REQUEST[$key]) ? wc_clean( urldecode( wp_unslash( $_REQUEST[ $key ] ) ) ) : $product->get_variation_default_attribute( sanitize_title($attribute_name) );
-                                    $terms = wc_get_product_terms($product->get_id(), $attribute_name, array('fields' => 'all'));
                                     echo '<label class="attribute-radio__label" for="' . $key . '">' . wc_attribute_label($attribute_name) . '</label>';
                                     echo '<div class="attribute-radio__values">';
                                     foreach ($terms as $term) {
@@ -160,6 +138,10 @@
                                     ));
                                     echo '</div>';
                                     break;
+                            }
+                            if ($switch) {
+                                echo '</div>';
+                                echo '</div>';
                             }
                             echo '</div>';
                         }

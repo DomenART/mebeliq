@@ -1,7 +1,3 @@
-// import $ from 'jquery'
-// window.$ = $
-// window.jQuery = $
-
 import UIkit from 'uikit'
 window.UIkit = UIkit
 UIkit.use(require('uikit/dist/js/uikit-icons'))
@@ -279,7 +275,6 @@ document.querySelectorAll('form[data-product_variations]').forEach(form => {
   updatePrice()
 })
 
-
-// variation_id
-// display_price
-// attributes
+document.querySelectorAll('[href="#individual"]').forEach(element => {
+  UIkit.toggle(element)
+})
