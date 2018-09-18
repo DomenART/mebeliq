@@ -278,3 +278,7 @@ document.querySelectorAll('form[data-product_variations]').forEach(form => {
 document.querySelectorAll('[href="#individual"]').forEach(element => {
   UIkit.toggle(element)
 })
+
+document.querySelectorAll('[href="#question"]').forEach(element => {
+  UIkit.toggle(element)
+})
