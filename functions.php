@@ -353,13 +353,10 @@ if ( function_exists( 'acf_add_local_field_group' ) ) {
         'required' => 1,
         'choices' => array(
             'select' => 'Выпадающий список',
-            'radio' => 'Радио переключатель',
+            'radio' => 'Радио',
             'color' => 'Цвет',
             'pattern' => 'Паттерн',
             'image' => 'Изображение',
-
-            'color_radio' => 'Цвета с радио включателем',
-            'image_radio' => 'Изображения с радио включателем',
         ),
     ));
 

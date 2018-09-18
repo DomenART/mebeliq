@@ -119,7 +119,7 @@
                             ?>
                         </div>
                         <div class="section-more">
-                            <a href="<?php the_permalink(81) ?>" class="section-more__link">
+                            <a href="#individual" class="section-more__link">
                                 <span>Задать свой вопрос... </span>
                                 <img src="<?php echo get_bloginfo('template_url') ?>/dist/img/icon-question.png" alt="">
                             </a>

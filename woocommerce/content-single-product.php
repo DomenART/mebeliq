@@ -206,7 +206,7 @@
                 <?php echo current($categories)->description ?>
             </div>
             <div class="section-more">
-                <a href="#question" class="section-more__link" uk-toggle>
+                <a href="#question" class="section-more__link">
                     <span>Задать свой вопрос... </span>
                     <img src="<?php echo get_bloginfo('template_url') ?>/dist/img/icon-question.png" alt="">
                 </a>
